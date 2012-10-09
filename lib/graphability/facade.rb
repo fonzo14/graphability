@@ -8,14 +8,14 @@ module Graphability
     end
 
     def graph_url(url)
+      graph    = nil
+
       response = http_client.get(url)
       if response.success?
-        p html_parser.parse(response.url, response.body)
+        graph = html_parser.parse(response.url, response.body)
       end
-    end
 
-    def graph_content(url, content)
-      html_parser.parse(url, content)
+      graph
     end
   end
 end
