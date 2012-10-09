@@ -7,12 +7,16 @@ module Graphability
       @html_parser = html_parser
     end
 
-    def graph_url(url)
-      graph    = nil
+    def graph(url)
+      graph    = {:url => url}
 
-      response = http_client.get(url)
-      if response.success?
-        graph = html_parser.parse(response.url, response.body)
+      begin
+        response = http_client.get(url)
+        if response.success?
+          graph = html_parser.parse(response.url, response.body)
+        end
+      rescue Exception => e
+        p [e.message,*e.backtrace]
       end
 
       graph
