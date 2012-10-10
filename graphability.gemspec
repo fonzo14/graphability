@@ -30,7 +30,9 @@ Gem::Specification.new do |s|
   # = Development dependencies
   #
   s.add_development_dependency "bundler"
-  s.add_development_dependency "rspec"   
+  s.add_development_dependency "rspec"
+  s.add_development_dependency "rb-inotify"
+  s.add_development_dependency "guard-rspec"
   s.add_development_dependency "em-http-request", "~> 1.0.2"
   s.add_development_dependency "em-synchrony", "~> 1.0.2"
 
