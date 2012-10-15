@@ -48,10 +48,8 @@ module Graphability
     end
 
     def root_url(url)
-      @root_url ||= begin
-        uri = Addressable::URI.parse(url)
-        (uri.scheme || 'http') + "://" + uri.host
-      end
+      uri = Addressable::URI.parse(url)
+      (uri.scheme || 'http') + "://" + uri.host
     end
   end
 end
