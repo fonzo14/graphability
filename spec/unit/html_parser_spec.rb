@@ -43,23 +43,28 @@ module Graphability
       g[:url].should eq "http://www.europe1.fr/actu/tutu.html"
     end
 
-    it "should return first og:url second twitter:url third canonical" do
+    it "should return the best url within og:url, twitter:url and canonical" do
       meta = <<-META
       <link rel="canonical" href="http://www.europe1.fr/actu/canonical.html" />
-      <meta property="og:url" content="http://www.europe1.fr/actu/og.html"/>
-      <meta property="twitter:url" content="http://www.europe1.fr/actu/twitter.html"/>
+      <meta property="og:url" content="http://www.europe1.fr/actu/og.html#xd_fragment_toto"/>
+      <meta property="twitter:url" content="http://www.europe1.fr/actu/twitter.html?xtor=23"/>
       META
 
       g = pa("http://www.europe1.fr/actu/dany.html", h(meta))
-      g[:url].should eq 'http://www.europe1.fr/actu/og.html'
+      g[:url].should eq 'http://www.europe1.fr/actu/canonical.html'
 
       meta = <<-META
-      <link rel="canonical" href="http://www.europe1.fr/actu/canonical.html" />
+      <link rel="canonical" href="http://www.europe1.fr/actu/canonical.html?toot=q" />
       <meta property="twitter:url" content="http://www.europe1.fr/actu/twitter.html"/>
       META
 
       g = pa("http://www.europe1.fr/actu/dany.html", h(meta))
       g[:url].should eq 'http://www.europe1.fr/actu/twitter.html'
+    end
+
+    it "should canonize the url found" do
+      g = pa("http://www.europe1.fr/actu/dany.html",h('<meta property="og:url" content="http://www.europe1.fr/actu/tutu.html?utm_source=xccff#q=34"/>'))
+      g[:url].should eq "http://www.europe1.fr/actu/tutu.html"
     end
 
     it "should canonize the input url if no meta url found" do
