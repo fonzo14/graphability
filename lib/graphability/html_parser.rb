@@ -1,29 +1,84 @@
 module Graphability
   class HtmlParser
-    def parse(url, content)
-      html = Nokogiri::HTML(content)
+    def parse(url, content, memento)
+      html     = Nokogiri::HTML(content)
 
-      newurl   = absolutify(find_url(url, html), root_url(url))
-      newimage = find_image(html)
+      newurl    = absolutify(find_url(url, html), root_url(url))
+      newdomain = domain(newurl)
+
+      newimage = find_image(html, newdomain, memento)
+      newtitle = find_title(html, newdomain, memento)
+      newdesc  = find_description(html, newdomain, memento)
 
       {
-        :url   => newurl,
-        :image => newimage
+        :url         => newurl,
+        :image       => newimage,
+        :title       => newtitle,
+        :description => newdesc
       }
     end
 
     private
-    def find_image(html)
+    def find_title(html, domain, memento)
+      title, fb_title, html_title = nil, nil, nil
+
+      meta = html.at_css("meta[property='og:title']")
+      if meta
+        fb_title = memento.verify(domain, "og:title", meta['content'])
+      end
+
+      title_tag = html.at_css("head title")
+      if title_tag
+        html_title = memento.verify(domain, "head:title", title_tag.text )
+      end
+
+      candidates = [fb_title, html_title].compact
+
+      if candidates.size > 0
+        title = candidates.first
+      end
+
+      textify title
+    end
+
+    def find_description(html, domain, memento)
+      description, fb_description = nil, nil
+
+      meta = html.at_css("meta[property='og:description']")
+      if meta
+        fb_description = memento.verify(domain, "og:description", meta['content'])
+      end
+ 
+      candidates = [fb_description].compact
+
+      if candidates.size > 0
+        description = candidates.first
+      end
+
+      textify description
+    end
+
+    def find_image(html, domain, memento)
+      og_image, twitter_image, image_src = nil, nil, nil
+
       meta = html.at_css("meta[property='og:image']")
-      return meta['content'] if meta
+      if meta
+        og_image = memento.verify(domain, "og:image", meta['content'])
+      end
 
       meta = html.at_css("meta[property='twitter:image']")
-      return meta['content'] if meta
+      if meta
+        twitter_image = memento.verify(domain, "twitter:image", meta['content'])
+      end
 
       link = html.at_css("link[rel=image_src]")
-      return link['href'] if link
+      if link
+        image_src = memento.verify(domain, "image_src", link['href'])
+      end
 
-      nil
+      candidates = [og_image, twitter_image, image_src].compact
+
+      candidates.first
     end
 
     def find_url(url, html)
@@ -66,6 +121,16 @@ module Graphability
     def root_url(url)
       uri = Addressable::URI.parse(url)
       (uri.scheme || 'http') + "://" + uri.host
+    end
+
+    def domain(url)
+      uri = Addressable::URI.parse(url)
+      uri.host
+    end
+
+    def textify(html)
+      return nil unless html
+      Nokogiri::HTML(html).text.chomp.strip
     end
   end
 end

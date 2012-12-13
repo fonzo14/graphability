@@ -3,7 +3,7 @@ require "graphability"
 g = Graphability.new
 
 EM.synchrony do
-  p g.graph('http://bigbrowser.blog.lemonde.fr/2012/10/08/baptiste-giabiconi-le-top-exclu-du-top/?utm_source=45')
+  p g.graph('http://www.chron.com/news/world/article/Syria-state-media-Blast-near-Damascus-kills-16-4114032.php#src=fb')
 
   EM.stop
 end
