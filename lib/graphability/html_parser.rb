@@ -82,7 +82,7 @@ module Graphability
         end
       end
  
-      candidates = [fb_description, twitter_description, meta_description].compact.reject { |desc| desc.empty? }
+      candidates = [fb_description, twitter_description, meta_description].compact.reject { |desc| desc.empty? }.reject { |desc| desc.size < 10 }
 
       if candidates.size > 0
         description = candidates.first
@@ -109,7 +109,7 @@ module Graphability
         image_src = memento.verify(domain, "image_src", link['href'])
       end
 
-      candidates = [og_image, twitter_image, image_src].compact.reject { |desc| desc.empty? }
+      candidates = [og_image, twitter_image, image_src].compact.reject { |desc| desc.empty? }.reject { |desc| desc.size < 5 }
 
       candidates.first
     end
