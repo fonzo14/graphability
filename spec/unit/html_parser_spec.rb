@@ -150,7 +150,8 @@ module Graphability
     end
 
     it "should return the html title" do
-      g = pa("http://www.toto.fr/foo.html", h("<title>UMP : Fran&ccedil;ois Baroin n\'est &quot;candidat &agrave; rien du tout&quot;   </title>"))
+      g = pa("http://www.toto.fr/foo.html", h("<title>
+            UMP : Fran&ccedil;ois Baroin n\'est &quot;candidat &agrave; rien du tout&quot;   </title>"))
       g[:title].should eq "UMP : François Baroin n'est \"candidat à rien du tout\""
     end
 
@@ -172,6 +173,11 @@ module Graphability
     it "should return the og:description" do
       g = pa("http://www.toto.fr/foo.html", h('<meta property="og:description" content="Accus&amp;eacute; de viser la direction du parti, l\'ancien ministre d&amp;eacute;ment et enfonce Jean-Fran&amp;ccedil;ois Cop&amp;eacute;."/>'))
       g[:description].should eq "Accusé de viser la direction du parti, l'ancien ministre dément et enfonce Jean-François Copé."
+    end
+
+    it "should not return an empty string" do
+      g = pa("http://www.toto.fr/foo.html", h('<meta property="og:description" content=""/>'))
+      g[:description].should be_nil
     end
 
     it "should return a different desc than title" do

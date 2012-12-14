@@ -49,7 +49,7 @@ module Graphability
         html_title = memento.verify(domain, "head:title", title_tag.text )
       end
 
-      candidates = [fb_title, html_title].compact
+      candidates = [fb_title, html_title].compact.reject { |desc| desc.empty? }
 
       if candidates.size > 0
         title = candidates.first
@@ -82,7 +82,7 @@ module Graphability
         end
       end
  
-      candidates = [fb_description, twitter_description, meta_description].compact
+      candidates = [fb_description, twitter_description, meta_description].compact.reject { |desc| desc.empty? }
 
       if candidates.size > 0
         description = candidates.first
@@ -109,7 +109,7 @@ module Graphability
         image_src = memento.verify(domain, "image_src", link['href'])
       end
 
-      candidates = [og_image, twitter_image, image_src].compact
+      candidates = [og_image, twitter_image, image_src].compact.reject { |desc| desc.empty? }
 
       candidates.first
     end
@@ -126,7 +126,7 @@ module Graphability
       link = html.at_css("link[rel=canonical]")
       canonical_url = link['href'] if link
 
-      candidates = [fb_url, twitter_url, canonical_url].compact
+      candidates = [fb_url, twitter_url, canonical_url].compact.reject { |desc| desc.empty? }
 
       # Les urls fb / twitter peuvent avoir des paramètres de tracking. Prendre celle qui n'en a pas si possible
       if candidates.size > 0
