@@ -174,6 +174,22 @@ module Graphability
       g[:description].should eq "Accusé de viser la direction du parti, l'ancien ministre dément et enfonce Jean-François Copé."
     end
 
+    it "should return a different desc than title" do
+      meta = <<-META
+      <meta property="og:title" content="my toto title"/>
+      <meta property="og:description" content="my toto title"/>
+      <meta property="twitter:description" content="my unique desc"/>
+      META
+
+      g = pa("http://www.toto.fr/foo.html", meta)
+      g[:description].should eq "my unique desc"
+    end
+
+    it "should return the twitter:description" do
+      g = pa("http://www.toto.fr/foo.html", h('<meta property="twitter:description" content="Accus&amp;eacute; de viser la direction du parti, l\'ancien ministre d&amp;eacute;ment et enfonce Jean-Fran&amp;ccedil;ois Cop&amp;eacute;."/>'))
+      g[:description].should eq "Accusé de viser la direction du parti, l'ancien ministre dément et enfonce Jean-François Copé."
+    end
+
     it "should return nil" do
       g = pa("http://www.toto.fr/foo.html", h(''))
       g[:description].should be_nil

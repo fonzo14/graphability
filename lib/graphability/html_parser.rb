@@ -8,7 +8,7 @@ module Graphability
 
       newimage = find_image(html, newdomain, memento)
       newtitle = find_title(html, newdomain, memento)
-      newdesc  = find_description(html, newdomain, memento)
+      newdesc  = find_description(html, newdomain, newtitle, memento)
 
       {
         :url         => newurl,
@@ -41,15 +41,24 @@ module Graphability
       textify title
     end
 
-    def find_description(html, domain, memento)
-      description, fb_description = nil, nil
+    def find_description(html, domain, title, memento)
+      description, fb_description, twitter_description = nil, nil, nil
 
       meta = html.at_css("meta[property='og:description']")
       if meta
-        fb_description = memento.verify(domain, "og:description", meta['content'])
+        if meta['content'] != title
+          fb_description = memento.verify(domain, "og:description", meta['content'])
+        end
+      end
+
+      meta = html.at_css("meta[property='twitter:description']")
+      if meta
+        if meta['content'] != title
+          twitter_description = memento.verify(domain, "twitter:description", meta['content'])
+        end
       end
  
-      candidates = [fb_description].compact
+      candidates = [fb_description, twitter_description].compact
 
       if candidates.size > 0
         description = candidates.first
