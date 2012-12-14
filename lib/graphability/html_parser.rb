@@ -9,16 +9,33 @@ module Graphability
       newimage = find_image(html, newdomain, memento)
       newtitle = find_title(html, newdomain, memento)
       newdesc  = find_description(html, newdomain, newtitle, memento)
+      newpub   = find_published(html)
 
       {
-        :url         => newurl,
-        :image       => newimage,
-        :title       => newtitle,
-        :description => newdesc
+        :url          => newurl,
+        :image        => newimage,
+        :title        => newtitle,
+        :description  => newdesc,
+        :published_at => newpub
       }
     end
 
     private
+    def find_published(html)
+      published_at, og_pub = nil, nil
+
+      meta = html.at_css("meta[property='article:published_time']")
+      if meta
+        og_pub = Time.parse(meta['content']).to_i
+      end
+
+      candidates = [og_pub].compact
+
+      published_at = candidates.first
+
+      published_at
+    end
+
     def find_title(html, domain, memento)
       title, fb_title, html_title = nil, nil, nil
 
@@ -42,7 +59,7 @@ module Graphability
     end
 
     def find_description(html, domain, title, memento)
-      description, fb_description, twitter_description = nil, nil, nil
+      description, fb_description, twitter_description, meta_description = nil, nil, nil, nil
 
       meta = html.at_css("meta[property='og:description']")
       if meta
@@ -57,8 +74,15 @@ module Graphability
           twitter_description = memento.verify(domain, "twitter:description", meta['content'])
         end
       end
+
+      meta = html.at_css("meta[name='description']") || html.at_css("meta[name='Description']")
+      if meta
+        if meta['content'] != title
+          meta_description = memento.verify(domain, "meta:description", meta['content'])
+        end
+      end
  
-      candidates = [fb_description, twitter_description].compact
+      candidates = [fb_description, twitter_description, meta_description].compact
 
       if candidates.size > 0
         description = candidates.first

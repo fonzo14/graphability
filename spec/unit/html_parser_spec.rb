@@ -190,6 +190,11 @@ module Graphability
       g[:description].should eq "Accusé de viser la direction du parti, l'ancien ministre dément et enfonce Jean-François Copé."
     end
 
+    it "should return the meta description" do
+      g = pa("http://www.toto.fr/foo.html", h('<meta name="Description" content="Le cerveau d&#8217;un millier de seniors st&#233;phanois est &#233;tudi&#233; depuis une d&#233;cennie au CHU. Des r&#233;sultats &#233;tonnants !" />'))
+      g[:description].should eq 'Le cerveau d’un millier de seniors stéphanois est étudié depuis une décennie au CHU. Des résultats étonnants !'
+    end
+
     it "should return nil" do
       g = pa("http://www.toto.fr/foo.html", h(''))
       g[:description].should be_nil
@@ -201,6 +206,18 @@ module Graphability
 
       g = pa("http://www.toto.fr/foo.html", h('<meta property="og:description" content="Accus&amp;eacute; de viser la direction du parti, l\'ancien ministre d&amp;eacute;ment et enfonce Jean-Fran&amp;ccedil;ois Cop&amp;eacute;."/>'), mem)
       g[:description].should be_nil
+    end
+
+    # Published at ---------------------------------------------
+
+    it "should return the open graph article:published_time" do
+      g = pa("http://www.toto.fr/foo.html", h('<meta property="article:published_time" content="2012-12-14T00:00:00+0100">'))
+      g[:published_at].should eq 1355439600
+    end
+
+    it "should return nil" do
+      g = pa("http://www.toto.fr/foo.html", h(''))
+      g[:published_at].should be_nil
     end
   end
 end
