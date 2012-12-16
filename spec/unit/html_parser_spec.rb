@@ -142,6 +142,14 @@ module Graphability
       g[:image].should eq 'http://graphics8.nytimes.com/images/common/icons/image_src.gif'
     end
 
+    it "should absolutify image url" do
+      meta = <<-META
+      <link rel="image_src" href="/images/common/icons/image_src.gif" />
+      META
+      g = pa("http://www.europe1.fr/actu/dany.html", h(meta))
+      g[:image].should eq 'http://www.europe1.fr/images/common/icons/image_src.gif'
+    end
+
     # Title ---------------------------------------------
 
     it "should return the og:title" do

@@ -1,12 +1,14 @@
 module Graphability
   class HtmlParser
     def parse(url, content, memento)
-      html     = Nokogiri::HTML(content)
+      html      = Nokogiri::HTML(content)
 
-      newurl    = absolutify(find_url(url, html), root_url(url))
+      root_url  = root_url(url)
+
+      newurl    = absolutify(find_url(url, html), root_url)
       newdomain = domain(newurl)
 
-      newimage = find_image(html, newdomain, memento)
+      newimage = absolutify(find_image(html, newdomain, memento), root_url)
       newtitle = find_title(html, newdomain, memento)
       newdesc  = find_description(html, newdomain, newtitle, memento)
       newpub   = find_published(html)
@@ -144,6 +146,7 @@ module Graphability
     end
 
     def absolutify(url, root_url)
+      return nil unless url
       if url =~ /^\w*\:/i
         url
       else
