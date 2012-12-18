@@ -15,9 +15,11 @@ module Graphability
         response = http_client.get(url)
         if response.success?
           graph = html_parser.parse(response.url, response.body, memento)
+        else
+          log.warn "Error #{response.code} getting #{url}"
         end
       rescue Exception => e
-        p [e.message,*e.backtrace]
+        log.error [e.message,*e.backtrace] 
       end
 
       graph
