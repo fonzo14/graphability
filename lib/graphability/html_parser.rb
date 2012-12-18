@@ -39,11 +39,16 @@ module Graphability
     end
 
     def find_title(html, domain, memento)
-      title, fb_title, html_title = nil, nil, nil
+      title, fb_title, twitter_title, html_title = nil, nil, nil
 
-      meta = html.at_css("meta[property='og:title']")
+      meta = html.at_css("meta[property='og:title']") || html.at_css("meta[name='og:title']")
       if meta
         fb_title = memento.verify(domain, "og:title", meta['content'])
+      end
+
+      meta = html.at_css("meta[property='twitter:title']") || html.at_css("meta[name='twitter:title']")
+      if meta
+        twitter_title = memento.verify(domain, "twitter:title", meta['content'])
       end
 
       title_tag = html.at_css("head title")
@@ -51,7 +56,7 @@ module Graphability
         html_title = memento.verify(domain, "head:title", title_tag.text )
       end
 
-      candidates = [fb_title, html_title].compact.reject { |desc| desc.empty? }
+      candidates = [fb_title, twitter_title, html_title].compact.reject { |desc| desc.empty? }
 
       if candidates.size > 0
         title = candidates.first
@@ -63,14 +68,14 @@ module Graphability
     def find_description(html, domain, title, memento)
       description, fb_description, twitter_description, meta_description = nil, nil, nil, nil
 
-      meta = html.at_css("meta[property='og:description']")
+      meta = html.at_css("meta[property='og:description']") || html.at_css("meta[name='og:description']")
       if meta
         if meta['content'] != title
           fb_description = memento.verify(domain, "og:description", meta['content'])
         end
       end
 
-      meta = html.at_css("meta[property='twitter:description']")
+      meta = html.at_css("meta[property='twitter:description']") || html.at_css("meta[name='twitter:description']")
       if meta
         if meta['content'] != title
           twitter_description = memento.verify(domain, "twitter:description", meta['content'])

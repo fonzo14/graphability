@@ -157,6 +157,11 @@ module Graphability
       g[:title].should eq "UMP : François Baroin n'est \"candidat à rien\""
     end
 
+    it "should return the twitter:title" do
+      g = pa("http://www.toto.fr/foo.html", h('<meta name="twitter:title" content="TOTO : Fran&ccedil;ois Baroin n\'est &quot;candidat &agrave; rien&quot;"/>'))
+      g[:title].should eq "TOTO : François Baroin n'est \"candidat à rien\""
+    end
+
     it "should return the html title" do
       g = pa("http://www.toto.fr/foo.html", h("<title>
             UMP : Fran&ccedil;ois Baroin n\'est &quot;candidat &agrave; rien du tout&quot;   </title>"))
