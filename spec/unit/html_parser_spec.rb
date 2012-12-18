@@ -163,7 +163,9 @@ module Graphability
     end
 
     it "should return the html title" do
-      g = pa("http://www.toto.fr/foo.html", h("<title>
+      g = pa("http://www.toto.fr/foo.html", h("<link href='http://znn.india.com/css/headerstyle.css?v=4' rel='stylesheet' type='text/css' />
+
+        <title>
             UMP : Fran&ccedil;ois Baroin n\'est &quot;candidat &agrave; rien du tout&quot;   </title>"))
       g[:title].should eq "UMP : François Baroin n'est \"candidat à rien du tout\""
     end
