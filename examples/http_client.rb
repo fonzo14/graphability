@@ -1,9 +1,15 @@
 require "graphability"
 
-g = Graphability.new
+class MementoMock
+  def verify(domain, attribute, value)
+     value
+  end
+end
+
+g = Graphability.new :memento => MementoMock.new
 
 EM.synchrony do
-  p g.graph('http://www.chron.com/news/world/article/Syria-state-media-Blast-near-Damascus-kills-16-4114032.php#src=fb')
+  p g.graph('http://www.ouest-france.fr/ofdernmin_-Coree-du-Nord.-Le-mysterieux-smartphone-de-Kim-Jong-Un_6346-2160823-fils-tous_filDMA.Htm')
 
   EM.stop
 end
