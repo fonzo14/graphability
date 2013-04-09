@@ -233,7 +233,7 @@ module Graphability
 
     it "should return the open graph article:published_time" do
       g = pa("http://www.toto.fr/foo.html", h('<meta property="article:published_time" content="2012-12-14T00:00:00+0100">'))
-      g[:published_at].should eq 1355439600
+      g[:published_at].should be_nil
     end
 
     it "should return nil" do

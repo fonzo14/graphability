@@ -24,18 +24,7 @@ module Graphability
 
     private
     def find_published(html)
-      published_at, og_pub = nil, nil
-
-      meta = html.at_css("meta[property='article:published_time']")
-      if meta
-        og_pub = Time.parse(meta['content']).to_i
-      end
-
-      candidates = [og_pub].compact
-
-      published_at = candidates.first
-
-      published_at
+      nil
     end
 
     def find_title(html, domain, memento)
