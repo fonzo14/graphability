@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   # = Library dependencies
   #
   s.add_dependency "nokogiri"
-  s.add_dependency "postrank-uri", "~> 1.0.17"
+  s.add_dependency "hotwater"
 
   # = Development dependencies
   #
